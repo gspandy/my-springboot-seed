@@ -23,7 +23,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seed.springboot.common.enums.ErrorCodeEnum;
-import com.seed.springboot.common.security.handler.AuthenticationSuccessHandler;
+import com.seed.springboot.common.security.SecurityConstants;
+import com.seed.springboot.common.security.handler.AppLoginInSuccessHandler;
+import com.seed.springboot.common.security.validate.code.ValidateCodeSecurityConfig;
 import com.seed.springboot.common.utils.wrapper.WrapMapper;
 
 /**
@@ -38,7 +40,10 @@ import com.seed.springboot.common.utils.wrapper.WrapMapper;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Autowired
-	private AuthenticationSuccessHandler authenticationSuccessHandler;
+	private AppLoginInSuccessHandler appLoginInSuccessHandler;
+	
+	@Autowired
+	private ValidateCodeSecurityConfig validateCodeSecurityConfig;
 	
 	@Bean
 	public AuthenticationEntryPoint authenticationEntryPoint(){
@@ -60,29 +65,17 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Override
 	public void configure(ResourceServerSecurityConfigurer resources) {
-//		resources.resourceId("*").stateless(true);
 		resources.authenticationEntryPoint(authenticationEntryPoint());
 	}
 	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-//		 http.requestMatchers().anyRequest()
-//			 .and().authorizeRequests().antMatchers("/oauth/**").permitAll()
-//			 .and().formLogin().successHandler(authenticationSuccessHandler)//登录成功处理器
-//			 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-//			 .and().authorizeRequests().anyRequest().authenticated()
-//			 .and().csrf().disable();
+		 http.requestMatchers().anyRequest()
+			 .and().authorizeRequests().antMatchers("/oauth/**").permitAll()
+			 .and().formLogin().loginProcessingUrl(SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM).successHandler(appLoginInSuccessHandler)//登录成功处理器
+			 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
+			 .and().apply(validateCodeSecurityConfig)
+			 .and().authorizeRequests().anyRequest().authenticated();
 		 
-//		 http.requestMatchers().antMatchers("/**")
-//         .and()
-//         .authorizeRequests()
-//         .anyRequest().authenticated()
-//         .and().csrf().disable();
-		
-		 http.formLogin()
-         .successHandler(authenticationSuccessHandler)//登录成功处理器
-         .and()
-         .authorizeRequests().anyRequest().authenticated().and()
-         .csrf().disable();
 	}
 }

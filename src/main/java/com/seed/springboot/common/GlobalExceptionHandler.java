@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.seed.springboot.common.enums.ErrorCodeEnum;
+import com.seed.springboot.common.security.validate.code.ValidateCodeException;
 import com.seed.springboot.common.utils.exception.BusinessException;
 import com.seed.springboot.common.utils.wrapper.WrapMapper;
 import com.seed.springboot.common.utils.wrapper.Wrapper;
@@ -33,6 +34,14 @@ public class GlobalExceptionHandler {
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public Wrapper<Object> illegalArgumentException(IllegalArgumentException e) {
+		log.error("参数非法异常 => {}", e.getMessage(), e);
+		return WrapMapper.wrap(ErrorCodeEnum.BA100400, e);
+	}
+	
+	@ExceptionHandler(ValidateCodeException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseBody
+	public Wrapper<Object> validateCodeException(ValidateCodeException e) {
 		log.error("参数非法异常 => {}", e.getMessage(), e);
 		return WrapMapper.wrap(ErrorCodeEnum.BA100400, e);
 	}
