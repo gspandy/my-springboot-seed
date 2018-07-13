@@ -1,8 +1,3 @@
-logging:
-  level:
-    root: INFO
-    com.seed.springboot: DEBUG
-    org.springframework.security: DEBUG
 spring:
   application:
     name: my-springboot-seed
