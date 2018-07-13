@@ -12,6 +12,9 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     joda-date-time-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+  cache:
+    cache-names:
+    - ${spring.application.name}
 security:
   oauth2:
     resource:
