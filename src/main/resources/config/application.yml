@@ -1,0 +1,25 @@
+logging:
+  level:
+    root: INFO
+    com.seed.springboot: DEBUG
+    org.springframework.security: DEBUG
+spring:
+  application:
+    name: my-springboot-seed
+  aop:
+    proxy-target-class: true
+    auto: true
+  mvc:
+    date-format: yyyy-MM-dd HH:mm:ss
+    favicon:
+      enabled: false
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    joda-date-time-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+security:
+  oauth2:
+    resource:
+      filter-order: 3
+seed:
+  seed-name: ${spring.application.name}
