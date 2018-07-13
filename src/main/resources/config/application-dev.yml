@@ -1,3 +1,8 @@
+logging:
+  level:
+    root: INFO
+    com.seed.springboot: DEBUG
+    org.springframework.security: DEBUG
 server:
   port: 9999
 spring:

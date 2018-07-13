@@ -1,3 +1,7 @@
+logging:
+  level:
+    root: INFO
+    com.seed.springboot: INFO
 server:
   port: 9999
   compression:
