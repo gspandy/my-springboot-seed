@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
@@ -23,7 +24,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seed.springboot.common.enums.ErrorCodeEnum;
-import com.seed.springboot.common.security.SecurityConstants;
 import com.seed.springboot.common.security.handler.AppLoginInSuccessHandler;
 import com.seed.springboot.common.security.validate.code.ValidateCodeSecurityConfig;
 import com.seed.springboot.common.utils.wrapper.WrapMapper;
@@ -51,6 +51,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 			
 			@Override
 			public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException, ServletException {
+				System.out.println("authenticationEntryPoint ==》 拦截了？");
 				response.setContentType("application/json");
 		        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		        try {
@@ -70,12 +71,24 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
-		 http.requestMatchers().anyRequest()
-			 .and().authorizeRequests().antMatchers("/oauth/**").permitAll()
-			 .and().formLogin().loginProcessingUrl(SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM).successHandler(appLoginInSuccessHandler)//登录成功处理器
-			 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())
-			 .and().apply(validateCodeSecurityConfig)
-			 .and().authorizeRequests().anyRequest().authenticated();
+		http
+			.csrf().disable()
+	        .headers().frameOptions().disable()
+//	    .and()
+//	    	.formLogin().successHandler(appLoginInSuccessHandler).failureHandler((request, response, authException) -> response.sendError(HttpServletResponse.SC_NOT_MODIFIED))
+//	    .and()
+//	    	.requestMatchers().anyRequest()
+//		.and()
+//			.authorizeRequests().antMatchers("/oauth/**").permitAll()
+        .and()
+			.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())//异常处理
+		.and()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+		.and()
+	    	.apply(validateCodeSecurityConfig)//验证码校验
+	    .and()
+	    	.authorizeRequests().anyRequest().authenticated()//登录后可以访问
+	    ;
 		 
 	}
 }

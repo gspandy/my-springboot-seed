@@ -6,6 +6,7 @@
 package com.seed.springboot.common.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -27,9 +28,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *  
  */
 @Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Order(1)
+//@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)  
+//@EnableWebSecurity
+//@EnableGlobalMethodSecurity(prePostEnabled = true)//允许进入页面方法前检验
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -51,19 +53,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 	
-	/**
-     * 1\这里记得设置requestMatchers,不拦截需要token验证的url
-     * 不然会优先被这个filter拦截,走用户端的认证而不是token认证
-     * 2\这里记得对oauth的url进行保护,正常是需要登录态才可以
-     */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable();
-        	http.requestMatchers().antMatchers("/oauth/**","/auth/**")
-                .and()
-                .authorizeRequests()
-                .antMatchers("/oauth/**").authenticated()
-                .and()
-                .formLogin().permitAll();
+		http
+			.csrf().disable()
+	    	.headers().frameOptions().disable()
+	    .and()
+			.requestMatchers().antMatchers("/auth/**")
+        .and()
+        	.authorizeRequests().antMatchers("/oauth/**").authenticated()
+//        .and()
+//        	.formLogin()
+//        		.loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
+//        		.loginProcessingUrl(SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM)
+//        		.successHandler((request, response, authException) -> response.sendError(HttpServletResponse.SC_NOT_MODIFIED))
+//        		.failureHandler((request, response, authException) -> response.sendError(HttpServletResponse.SC_NOT_MODIFIED))
+	    ;
 	}
 }

@@ -27,6 +27,11 @@ public interface SecurityConstants {
 	 */
 	String DEFAULT_PARAMETER_NAME_CODE_EMAIL = "emailCode";
 	
+	
+	/**
+	 * 当请求需要身份认证时，默认跳转的url
+	 */
+	String DEFAULT_UNAUTHENTICATION_URL = "/auth/require";
 	/**
 	 * 默认的处理验证码的url前缀
 	 */
