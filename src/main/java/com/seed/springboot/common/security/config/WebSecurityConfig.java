@@ -6,13 +6,10 @@
 package com.seed.springboot.common.security.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -28,10 +25,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  *  
  */
 @Configuration
-@Order(1)
-//@Order(SecurityProperties.ACCESS_OVERRIDE_ORDER)  
-//@EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true)//允许进入页面方法前检验
+@EnableWebSecurity
+//@Order(1)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
@@ -55,19 +50,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		
 		http
-			.csrf().disable()
 	    	.headers().frameOptions().disable()
 	    .and()
-			.requestMatchers().antMatchers("/auth/**")
+			.requestMatchers().antMatchers("/oauth/**")
         .and()
-        	.authorizeRequests().antMatchers("/oauth/**").authenticated()
-//        .and()
-//        	.formLogin()
-//        		.loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
-//        		.loginProcessingUrl(SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM)
-//        		.successHandler((request, response, authException) -> response.sendError(HttpServletResponse.SC_NOT_MODIFIED))
-//        		.failureHandler((request, response, authException) -> response.sendError(HttpServletResponse.SC_NOT_MODIFIED))
-	    ;
+        	.authorizeRequests()
+//        		.antMatchers("/oauth/authorize").permitAll()//有问题 还未解决
+        		.anyRequest().authenticated()
+        .and()
+        	.csrf().disable();
 	}
 }

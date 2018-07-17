@@ -42,7 +42,7 @@ public class WrapMapper {
 	}
 	
 	public static <E> Wrapper<E> wrap(BusinessException bex) {
-		return wrap(bex.getCode(), bex.getMessage(), bex.getCause().getMessage(), null);
+		return wrap(bex.getCode(), bex.getMessage(), bex.getCause()!=null?bex.getCause().getMessage(): null, null);
 	}
 
 	public static <E> E unWrap(Wrapper<E> wrapper) {

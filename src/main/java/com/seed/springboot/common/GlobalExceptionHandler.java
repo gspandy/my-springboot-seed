@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
 		log.error("业务异常 => {}", e.getMessage(), e);
 		return WrapMapper.wrap(e);
 	}
-
+	
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ResponseBody

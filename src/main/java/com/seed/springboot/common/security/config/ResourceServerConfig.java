@@ -20,11 +20,15 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seed.springboot.common.enums.ErrorCodeEnum;
-import com.seed.springboot.common.security.handler.AppLoginInSuccessHandler;
+import com.seed.springboot.common.security.SecurityConstants;
 import com.seed.springboot.common.security.validate.code.ValidateCodeSecurityConfig;
 import com.seed.springboot.common.utils.wrapper.WrapMapper;
 
@@ -40,10 +44,20 @@ import com.seed.springboot.common.utils.wrapper.WrapMapper;
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Autowired
-	private AppLoginInSuccessHandler appLoginInSuccessHandler;
+	private OAuth2WebSecurityExpressionHandler appSecurityExpressionHandler;
 	
 	@Autowired
 	private ValidateCodeSecurityConfig validateCodeSecurityConfig;
+	
+	@Autowired
+	private AccessDeniedHandler appAccessDeniedHandler;
+	
+	@Autowired
+	private AuthenticationSuccessHandler appLoginSuccessHandler;
+	
+	@Autowired
+	private AuthenticationFailureHandler appLoginFailureHandler;
+	
 	
 	@Bean
 	public AuthenticationEntryPoint authenticationEntryPoint(){
@@ -66,29 +80,36 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
 	@Override
 	public void configure(ResourceServerSecurityConfigurer resources) {
-		resources.authenticationEntryPoint(authenticationEntryPoint());
+		resources.expressionHandler(appSecurityExpressionHandler).authenticationEntryPoint(authenticationEntryPoint());
 	}
 	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http
-			.csrf().disable()
-	        .headers().frameOptions().disable()
-//	    .and()
-//	    	.formLogin().successHandler(appLoginInSuccessHandler).failureHandler((request, response, authException) -> response.sendError(HttpServletResponse.SC_NOT_MODIFIED))
-//	    .and()
-//	    	.requestMatchers().anyRequest()
-//		.and()
-//			.authorizeRequests().antMatchers("/oauth/**").permitAll()
-        .and()
-			.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint())//异常处理
-		.and()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-		.and()
+    	.formLogin()
+	    	.loginPage(SecurityConstants.DEFAULT_UNAUTHENTICATION_URL)
+			.loginProcessingUrl(SecurityConstants.DEFAULT_SIGN_IN_PROCESSING_URL_FORM)
+    		.successHandler(appLoginSuccessHandler)
+    		.failureHandler(appLoginFailureHandler);
+		
+	    http.headers().frameOptions().disable();
+	    
+		http
 	    	.apply(validateCodeSecurityConfig)//验证码校验
 	    .and()
-	    	.authorizeRequests().anyRequest().authenticated()//登录后可以访问
+	    	.headers().frameOptions().disable()
+	    .and()
+	    	.exceptionHandling().accessDeniedHandler(appAccessDeniedHandler)//异常处理
+//	    .and()
+//	    	.requestMatchers().antMatchers("/oauth/**")
+	    .and()
+	    	.authorizeRequests()
+	    	.antMatchers("/auth/**").permitAll()
+	    	.anyRequest().authenticated()
+	    .and()
+	    	.csrf().disable()
 	    ;
+	    http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 		 
 	}
 }

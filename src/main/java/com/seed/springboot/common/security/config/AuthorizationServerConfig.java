@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.endpoint.AuthorizationEndpoint;
 import org.springframework.security.oauth2.provider.error.DefaultWebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
@@ -46,8 +47,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Autowired
 	private RedisConnectionFactory connectionFactory;
 	
-//	@Autowired  
-//    private AuthorizationEndpoint authorizationEndpoint;
+	@Autowired  
+    private AuthorizationEndpoint authorizationEndpoint;
 	
 	@Autowired
     private UserDetailsService userDetailsService;
@@ -55,8 +56,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@PostConstruct  
     public void init() {  
 		//自定义授权页面
-//        authorizationEndpoint.setUserApprovalPage("forward:/oauth/my_approval_page");  
-//        authorizationEndpoint.setErrorPage("forward:/oauth/my_error_page");  
+        authorizationEndpoint.setUserApprovalPage("forward:/oauth/my_approval_page");  
+        authorizationEndpoint.setErrorPage("forward:/oauth/my_error_page");  
     }  
 	
 	@Bean

@@ -53,7 +53,7 @@ public class CustomErrorController extends BasicErrorController {
 		Map<String, Object> body = Maps.newLinkedHashMap();
 		body.put("code", STATUS_CODE_MAP.get(status.value()).getCode());
 		body.put("error", STATUS_CODE_MAP.get(status.value()).getMessage());
-		body.put("error_description", map.get("error"));
+		body.put("error_description", map.get("message")==null?map.get("error"):map.get("message"));
 		
 		log.debug("status => {}", status.value());
 		log.debug("body  => {}", JsonMapper.toJson(body));

@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.util.HtmlUtils;
 
+import com.seed.springboot.common.utils.exception.BusinessException;
+
 /**
  * @ClassName: LoginController
  * @Description: TODO(这里用一句话描述这个类的作用)
@@ -34,7 +36,8 @@ public class OAuthController {
 	@RequestMapping("/current")
 	@ResponseBody
     public Principal getUser(Principal principal) {
-        return principal;
+        throw new BusinessException("as--------------------");
+//        return principal;
     }
 	
 	@RequestMapping("/oauth/my_approval_page")

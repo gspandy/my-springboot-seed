@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException;
 import org.springframework.security.oauth2.provider.ClientDetails;
@@ -29,6 +28,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.seed.springboot.common.utils.lang.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,13 +41,10 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Component
 @Slf4j
-public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler	{
+public class AppLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler	{
 
 	@Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ClientDetailsService clientDetailsService;
@@ -57,9 +54,7 @@ public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-    	System.out.println("-------------------------");
         log.info("【AppLoginInSuccessHandler】 onAuthenticationSuccess authentication={}", authentication);
-
         String header = request.getHeader("Authorization");
 
         if (header == null || !header.startsWith("Basic ")) {
@@ -77,7 +72,7 @@ public class AppLoginInSuccessHandler extends SavedRequestAwareAuthenticationSuc
 
         if (clientDetails == null) {
             throw new UnapprovedClientAuthenticationException("clientId 对应的配置信息不存在" + clientId);
-        } else if (!passwordEncoder.matches(clientSecret, clientDetails.getClientSecret())) {
+        } else if (!StringUtils.equals(clientDetails.getClientSecret(), clientSecret)) {
             throw new UnapprovedClientAuthenticationException("clientSecret 不匹配" + clientId);
         }
 
