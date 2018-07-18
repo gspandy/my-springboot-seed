@@ -15,9 +15,32 @@ spring:
   cache:
     cache-names:
     - ${spring.application.name}
-security:
-  oauth2:
-    resource:
-      filter-order: 3
 seed:
   seed-name: ${spring.application.name}
+  jwt:
+    secret: 201807181234
+    expireIn: 1728000 #20Days
+    token:
+      header: Authorization
+      type: Bearer
+      length: 7
+    prefix:
+      auth: Auth
+      user: UserDetail
+  validate-code:
+    image:
+      urls: /auth/register,/auth/code/email,/auth/code/sms
+      expire-in: 600
+    email:
+      urls: /auth/submitResetPwdEmail
+      expire-in: 600
+      length: 8
+    sms:
+      urls: /auth/submitResetPwdPhone
+      expire-in: 600
+      length: 4
+      mobile-max-send-count: 1
+      ip-max-send-count: 2
+      total-max-send-count: 3
+      
+      

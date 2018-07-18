@@ -5,14 +5,17 @@
  */
 package com.seed.springboot.common.security;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
 
 /**
  * @ClassName: MyUserDetailsService
@@ -34,18 +37,26 @@ public class MyUserDetailsService implements UserDetailsService {
 		// List<SimpleGrantedAuthority> authorities =
 		// createAuthorities("admin_role,user_role");
 		// return new User("user", password, authorities);
-		return new User(username, passwordEncoder.encode("123456"), AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
+//		return new User(username, passwordEncoder.encode("123456"), AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
+		MyUserDetails myUserDetails = new MyUserDetails();
+		myUserDetails.setLoginName(username);
+		myUserDetails.setPassword(passwordEncoder.encode("123456"));
+		myUserDetails.setAuthorities(mapToGrantedAuthorities());
+		myUserDetails.setEnabled(true);
+		return myUserDetails;
 	}
 	
 	/**
      * 权限转换
+	 * @param <SimpleGrantedAuthority>
+	 * @param <GrantedAuthority>
      *
      * @param sysRoles 角色列表
      * @param sysMenus 菜单列表
      * @return 权限列表
      */
-//    private static List<SimpleGrantedAuthority> mapToGrantedAuthorities(List<SysRole> sysRoles, List<SysMenu> sysMenus) {
-//
+    private static List<SimpleGrantedAuthority> mapToGrantedAuthorities() {
+
 //        List<SimpleGrantedAuthority> authorities =
 //            sysRoles.stream().filter(SysRole::getEnabled)
 //                .map(sysRole -> new SimpleGrantedAuthority(sysRole.getName())).collect(Collectors.toList());
@@ -57,8 +68,9 @@ public class MyUserDetailsService implements UserDetailsService {
 //                authorities.add(new SimpleGrantedAuthority(permission));
 //            }
 //        });
-//
-//        return authorities;
-//    }
+    	List<SimpleGrantedAuthority> authorities = Lists.newLinkedList();
+		authorities.add(new SimpleGrantedAuthority("USER_ROLE"));
+		return authorities;
+    }
 
 }
