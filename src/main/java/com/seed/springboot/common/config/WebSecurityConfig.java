@@ -120,7 +120,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/favicon.ico",
             "/swagger**/**",
             "/*/api-docs",
-            "/webjars/**"
+            "/webjars/**",
+            "/druid/**"
         )
         .antMatchers(HttpMethod.POST, "/*/user")
         ;
@@ -154,8 +155,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        .antMatchers("/auth/**").permitAll()
 	        .antMatchers(HttpMethod.POST, "/auth/form").authenticated()
 	        .anyRequest().authenticated();
-		
-//		http.addFilterBefore(validateCodeFilter, AbstractPreAuthenticatedProcessingFilter.class);
 		
 		 // Custom JWT based security filter
         http.addFilterBefore(authenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
