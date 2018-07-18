@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
 
 import com.seed.springboot.common.DefaultProfileUtil;
-import com.seed.springboot.common.GlobalConstants;
+import com.seed.springboot.common.SeedConstants;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,8 +29,8 @@ public class MySpringbootSeedApplication {
 	@PostConstruct
 	public void initApplication() {
 		Collection<String> activeProfiles = Arrays.asList(env.getActiveProfiles());
-		if (activeProfiles.contains(GlobalConstants.SPRING_PROFILE_DEVELOPMENT)
-				&& activeProfiles.contains(GlobalConstants.SPRING_PROFILE_PRODUCTION)) {
+		if (activeProfiles.contains(SeedConstants.SPRING_PROFILE_DEVELOPMENT)
+				&& activeProfiles.contains(SeedConstants.SPRING_PROFILE_PRODUCTION)) {
 			log.error("You have misconfigured your application! It should not run "
 					+ "with both the 'dev' and 'prod' profiles at the same time.");
 		}

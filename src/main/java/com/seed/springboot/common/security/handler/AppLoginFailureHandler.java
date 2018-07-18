@@ -11,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seed.springboot.common.enums.ErrorCodeEnum;
 import com.seed.springboot.common.utils.wrapper.WrapMapper;
+
+import lombok.extern.slf4j.Slf4j;
 
 /** 
  * @ClassName: AppLoginFailureHandler 
@@ -27,19 +30,20 @@ import com.seed.springboot.common.utils.wrapper.WrapMapper;
  *  
  */
 @Component
+@Slf4j
 public class AppLoginFailureHandler extends SimpleUrlAuthenticationFailureHandler{
 
-	/* (non-Javadoc)
-	 * @see org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler#onAuthenticationFailure(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, org.springframework.security.core.AuthenticationException)
-	 */
 	@Override
-	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-			AuthenticationException ex) throws IOException, ServletException {
-		System.out.println("appLoginFailureHandler ==》 拦截了？");
+	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException, ServletException {
+		log.debug("[AppLoginFailureHandler] onAuthenticationFailure ==》 拦截了？");
 		response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         try {
-            ObjectMapper mapper = new ObjectMapper();
+        	ObjectMapper mapper = new ObjectMapper();
+        	if(ex instanceof BadCredentialsException){
+        		mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100401, ex));
+        	}
+        	
             mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100401, ex));
         } catch (Exception e) {
             throw new ServletException();

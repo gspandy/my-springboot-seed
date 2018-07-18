@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.seed.springboot.common.enums.ErrorCodeEnum;
 import com.seed.springboot.common.utils.wrapper.WrapMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
 /** 
  * @ClassName: AppAccessDeniedHandler 
  * @Description: TODO(这里用一句话描述这个类的作用) 
@@ -26,18 +28,18 @@ import com.seed.springboot.common.utils.wrapper.WrapMapper;
  * @date 2018年7月17日 下午1:41:13 
  *  
  */
-@Configuration("appAccessDeniedHandler")
+@Configuration
+@Slf4j
 public class AppAccessDeniedHandler implements AccessDeniedHandler {
 
 	@Override
-	public void handle(HttpServletRequest request, HttpServletResponse response,
-			AccessDeniedException accessDeniedException) throws IOException, ServletException {
-		System.out.println("appAccessDeniedHandler ==》 拦截了？");
+	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+		log.debug("[AppAccessDeniedHandler] handle ==》 拦截了？");
 		response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         try {
             ObjectMapper mapper = new ObjectMapper();
-            mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100401, accessDeniedException));
+            mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100403, accessDeniedException));
         } catch (Exception e) {
             throw new ServletException();
         }

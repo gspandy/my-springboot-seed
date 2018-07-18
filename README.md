@@ -1,17 +1,11 @@
-my-springboot-seed（Oauth2）
+my-springboot-seed（SpringSecurity+JWT）
 ================
 [![GitHub release](https://img.shields.io/github/release/ruyangit/my-springboot-seed.svg)](https://github.com/ruyangit/my-springboot-seed/releases)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 #### 介绍
 
-采用SpringBoot、SpringSecurity、Oauth2 授权认证，权限管理。
-
-* **Oauth2 Grant Type**
-  * Authorization Code  授权码模式类似微博、微信等.
-  * Implicit  不常用不做说明.
-  * Resource Owner Password Credentials(password)  受信任的应用，该系统主要应用方式.
-  * Client Credentials  用在应用API客户端，如  android、ios、webapp.
+采用SpringBoot、SpringSecurity、JWT 授权认证，权限管理。
 
 #### 开始使用
 ``` bash
@@ -28,7 +22,7 @@ mvn clean package -Dmaven.test.skip=true -P dev
 java -jar target/my-springboot-seed.jar --spring.profiles.active=dev
 
 访问
-http://127.0.0.1:9999/current
+http://127.0.0.1:9999/test
 ```
 
 #### 开发
@@ -38,6 +32,13 @@ http://127.0.0.1:9999/current
 ```
 
 #### 版本管理
+
+* **v0.0.3**
+  * 完善认证逻辑，异常统一处理
+  * 新增邮箱验证
+  * 新增图片验证码
+  * 新增短信验证码
+  * 新增短信验证码登录
 
 * **v0.0.2**
   * 新增验证码code处理器，code发送，校验，销毁

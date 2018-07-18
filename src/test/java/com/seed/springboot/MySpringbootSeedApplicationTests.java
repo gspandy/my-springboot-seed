@@ -10,7 +10,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
@@ -44,7 +43,7 @@ public class MySpringbootSeedApplicationTests {
 	public void getUserInfo() throws Exception {
 		RestTemplate rest = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
-		headers.add("authorization", "Bearer " + getAccessToken());
+//		headers.add("authorization", "Bearer " + getAccessToken());
 		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 		// pay attention, if using get with headers, should use exchange instead
 		// of getForEntity / getForObject
@@ -53,31 +52,31 @@ public class MySpringbootSeedApplicationTests {
 		log.info("用户信息返回的结果={}", JsonMapper.toJson(result));
 	}
 
-	/**
-	 * 获取accessToken
-	 * 
-	 * @return
-	 */
-	private String getAccessToken() {
-		log.info(TOKEN_REQUEST_URI);
-		log.info(getBasicAuthHeader());
-		RestTemplate rest = new RestTemplate();
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.TEXT_PLAIN);
-		headers.add("authorization", getBasicAuthHeader());
-		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-		ResponseEntity<OAuth2AccessToken> resp = rest.postForEntity(TOKEN_REQUEST_URI, entity, OAuth2AccessToken.class);
-		if (!resp.getStatusCode().equals(HttpStatus.OK)) {
-			throw new RuntimeException(resp.toString());
-		}
-		OAuth2AccessToken t = resp.getBody();
-		log.info("accessToken={}", JsonMapper.toJson(t));
-		log.info("the response, access_token: " + t.getValue() + "; token_type: " + t.getTokenType() + "; "
-				+ "refresh_token: " + t.getRefreshToken() + "; expiration: " + t.getExpiresIn() + ", expired when:"
-				+ t.getExpiration());
-		return t.getValue();
-
-	}
+//	/**
+//	 * 获取accessToken
+//	 * 
+//	 * @return
+//	 */
+//	private String getAccessToken() {
+//		log.info(TOKEN_REQUEST_URI);
+//		log.info(getBasicAuthHeader());
+//		RestTemplate rest = new RestTemplate();
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.TEXT_PLAIN);
+//		headers.add("authorization", getBasicAuthHeader());
+//		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+//		ResponseEntity<OAuth2AccessToken> resp = rest.postForEntity(TOKEN_REQUEST_URI, entity, OAuth2AccessToken.class);
+//		if (!resp.getStatusCode().equals(HttpStatus.OK)) {
+//			throw new RuntimeException(resp.toString());
+//		}
+//		OAuth2AccessToken t = resp.getBody();
+//		log.info("accessToken={}", JsonMapper.toJson(t));
+//		log.info("the response, access_token: " + t.getValue() + "; token_type: " + t.getTokenType() + "; "
+//				+ "refresh_token: " + t.getRefreshToken() + "; expiration: " + t.getExpiresIn() + ", expired when:"
+//				+ t.getExpiration());
+//		return t.getValue();
+//
+//	}
 
 	/**
 	 * 构建header

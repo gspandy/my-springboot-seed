@@ -6,115 +6,59 @@
 package com.seed.springboot.common.security.handler;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.common.OAuth2AccessToken;
-import org.springframework.security.oauth2.common.exceptions.UnapprovedClientAuthenticationException;
-import org.springframework.security.oauth2.provider.ClientDetails;
-import org.springframework.security.oauth2.provider.ClientDetailsService;
-import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.OAuth2Request;
-import org.springframework.security.oauth2.provider.TokenRequest;
-import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.seed.springboot.common.utils.lang.StringUtils;
+import com.google.common.collect.Maps;
+import com.seed.springboot.common.security.JwtTokenUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
-/** 
- * @ClassName: AuthenticationSuccessHandler 
- * @Description: TODO(这里用一句话描述这个类的作用) 
+/**
+ * @ClassName: AuthenticationSuccessHandler
+ * @Description: TODO(这里用一句话描述这个类的作用)
  * @author RuYang ruyang@fosun.com
- * @date 2018年7月10日 下午6:05:05 
- *  
+ * @date 2018年7月10日 下午6:05:05
+ * 
  */
 @Component
 @Slf4j
-public class AppLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler	{
+public class AppLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
 	@Autowired
-    private ObjectMapper objectMapper;
+	private ObjectMapper objectMapper;
 
-    @Autowired
-    private ClientDetailsService clientDetailsService;
+	@Autowired
+	private JwtTokenUtils jwtTokenUtils;
 
-    @Autowired
-    private AuthorizationServerTokenServices authorizationServerTokenServices;
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
+		log.debug("[AppLoginSuccessHandler] onAuthenticationSuccess ==》 认证通过？");
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        log.info("【AppLoginInSuccessHandler】 onAuthenticationSuccess authentication={}", authentication);
-        String header = request.getHeader("Authorization");
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        if (header == null || !header.startsWith("Basic ")) {
-            throw new UnapprovedClientAuthenticationException("请求头中无client信息");
-        }
-        
-        String[] tokens = this.extractAndDecodeHeader(header, request);
+		final UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		final String token = jwtTokenUtils.generateToken(userDetails); // 生成Token
 
-        assert tokens.length == 2;
+		Map<String, Object> tokenMap = Maps.newLinkedHashMap();
+		tokenMap.put("access_token", token);
+		tokenMap.put("expires_in", jwtTokenUtils.getJwt().getExpireIn());
+		tokenMap.put("token_type", jwtTokenUtils.getJwt().getToken().getType() + " ");
 
-        String clientId = tokens[0];
-        String clientSecret = tokens[1];
+		log.debug("用户[{}]记录登录日志", userDetails.getUsername());
 
-        ClientDetails clientDetails = clientDetailsService.loadClientByClientId(clientId);
-
-        if (clientDetails == null) {
-            throw new UnapprovedClientAuthenticationException("clientId 对应的配置信息不存在" + clientId);
-        } else if (!StringUtils.equals(clientDetails.getClientSecret(), clientSecret)) {
-            throw new UnapprovedClientAuthenticationException("clientSecret 不匹配" + clientId);
-        }
-
-        TokenRequest tokenRequest = new TokenRequest(new HashMap<>(), clientId, clientDetails.getScope(), "custom");
-
-        OAuth2Request oAuth2Request = tokenRequest.createOAuth2Request(clientDetails);
-
-        OAuth2Authentication oAuth2Authentication = new OAuth2Authentication(oAuth2Request, authentication);
-
-        OAuth2AccessToken token = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
-
-        response.setContentType("application/json;charset=UTF-8");
-        
-        response.getWriter().write(objectMapper.writeValueAsString(token));
-        log.info("token={}", objectMapper.writeValueAsString(token));
-
-    }
-
-    /**
-     * 解码
-     *
-     * @param header
-     * @param request
-     * @return
-     * @throws IOException
-     */
-    private String[] extractAndDecodeHeader(String header, HttpServletRequest request) throws IOException {
-        byte[] base64Token = header.substring(6).getBytes("UTF-8");
-
-        byte[] decoded;
-        try {
-            decoded = Base64.getDecoder().decode(base64Token);
-        } catch (IllegalArgumentException var7) {
-            throw new BadCredentialsException("Failed to decode basic authentication token");
-        }
-
-        String token = new String(decoded, "UTF-8");
-        int delim = token.indexOf(":");
-        if (delim == -1) {
-            throw new BadCredentialsException("Invalid basic authentication token");
-        } else {
-            return new String[]{token.substring(0, delim), token.substring(delim + 1)};
-        }
-    }
+		response.setContentType("application/json;charset=UTF-8");
+		response.getWriter().write((objectMapper.writeValueAsString(tokenMap)));
+	}
 }

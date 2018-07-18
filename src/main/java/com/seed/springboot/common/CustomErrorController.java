@@ -24,7 +24,9 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.google.common.collect.Maps;
 import com.seed.springboot.common.enums.ErrorCodeEnum;
+import com.seed.springboot.common.utils.lang.StringUtils;
 import com.seed.springboot.common.utils.mapper.JsonMapper;
+import com.seed.springboot.common.validate.code.ValidateCodeException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -49,8 +51,14 @@ public class CustomErrorController extends BasicErrorController {
 	@Override
 	public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
 		Map<String, Object> map = getErrorAttributes(request, isIncludeStackTrace(request, MediaType.ALL));
+		
 		HttpStatus status = this.getStatus(request);
 		Map<String, Object> body = Maps.newLinkedHashMap();
+		
+		if(StringUtils.containsIgnoreCase(String.valueOf(map.get("exception")), ValidateCodeException.class.getName())){
+			status = HttpStatus.valueOf(400);
+		}
+		
 		body.put("code", STATUS_CODE_MAP.get(status.value()).getCode());
 		body.put("error", STATUS_CODE_MAP.get(status.value()).getMessage());
 		body.put("error_description", map.get("message")==null?map.get("error"):map.get("message"));
