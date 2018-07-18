@@ -50,14 +50,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		
 		http
 	    	.headers().frameOptions().disable()
 	    .and()
 			.requestMatchers().antMatchers("/oauth/**")
         .and()
         	.authorizeRequests()
-//        		.antMatchers("/oauth/authorize").permitAll()//有问题 还未解决
+//        		.antMatchers("/oauth/token").authenticated()
         		.anyRequest().authenticated()
         .and()
         	.csrf().disable();
