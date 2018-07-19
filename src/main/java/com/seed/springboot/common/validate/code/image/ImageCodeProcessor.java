@@ -45,7 +45,9 @@ public class ImageCodeProcessor extends ValidateCodeProcessorAdapter<ImageCode> 
 		ImageIO.write(imageCode.getImage(), "JPEG", bos);
 
 		HttpServletResponse response = request.getResponse();
-		response.setContentType("application/json");
-		response.getOutputStream().print(objectMapper.writeValueAsString(WrapMapper.ok(bos.toByteArray())));
+		response.setContentType("application/json;charset=UTF-8");
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(response.getOutputStream(), WrapMapper.ok(bos.toByteArray()));
+		
 	}
 }

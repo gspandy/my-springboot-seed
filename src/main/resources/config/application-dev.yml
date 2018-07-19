@@ -5,6 +5,7 @@ logging:
     org.springframework.security: DEBUG
 server:
   port: 9999
+  context-path: /seed
 spring:
   profiles:
     active: dev

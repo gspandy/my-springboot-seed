@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.seed.springboot.common.security.JwtTokenUtils;
+import com.seed.springboot.common.utils.wrapper.WrapMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,9 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class AppLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
-
-	@Autowired
-	private ObjectMapper objectMapper;
 
 	@Autowired
 	private JwtTokenUtils jwtTokenUtils;
@@ -59,6 +57,7 @@ public class AppLoginSuccessHandler extends SavedRequestAwareAuthenticationSucce
 		log.debug("用户[{}]记录登录日志", userDetails.getUsername());
 
 		response.setContentType("application/json;charset=UTF-8");
-		response.getWriter().write((objectMapper.writeValueAsString(tokenMap)));
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(response.getOutputStream(), WrapMapper.ok(tokenMap));
 	}
 }

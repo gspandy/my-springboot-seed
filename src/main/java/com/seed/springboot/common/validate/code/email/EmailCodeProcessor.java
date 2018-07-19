@@ -47,8 +47,10 @@ public class EmailCodeProcessor extends ValidateCodeProcessorAdapter<ValidateCod
 		String paramName = SeedConstants.DEFAULT_PARAMETER_NAME_EMAIL;
 		String email = ServletRequestUtils.getRequiredStringParameter(request.getRequest(), paramName);
 		emailCodeSender.send(email, validateCode.getCode());
+		
 		HttpServletResponse response = request.getResponse();
-		response.setContentType("application/json");
-		response.getOutputStream().print(objectMapper.writeValueAsString(WrapMapper.ok()));
+		response.setContentType("application/json;charset=UTF-8");
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.writeValue(response.getOutputStream(), WrapMapper.ok("发送成功"));
 	}
 }

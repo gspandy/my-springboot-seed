@@ -35,7 +35,7 @@ public class AppAccessDeniedHandler implements AccessDeniedHandler {
 	@Override
 	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
 		log.debug("[AppAccessDeniedHandler] handle ==》 拦截了？");
-		response.setContentType("application/json");
+		response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         try {
             ObjectMapper mapper = new ObjectMapper();

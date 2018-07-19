@@ -11,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
@@ -38,7 +37,7 @@ public class AppLoginFailureHandler extends SimpleUrlAuthenticationFailureHandle
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException, ServletException {
 		log.debug("[AppLoginFailureHandler] onAuthenticationFailure ==》 拦截了？");
-		response.setContentType("application/json");
+		response.setContentType("application/json;charset=UTF-8");
 		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         try {
         	ObjectMapper mapper = new ObjectMapper();
