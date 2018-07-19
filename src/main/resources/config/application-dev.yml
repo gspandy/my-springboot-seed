@@ -29,8 +29,9 @@ spring:
       pool-prepared-statements: true
       max-pool-prepared-statement-per-connection-size: 20
       filters: stat,wall,log4j
-      
-      
   redis:
     host: localhost
     database: 2
+  cache:
+    cache-names:
+    - ${spring.application.name}

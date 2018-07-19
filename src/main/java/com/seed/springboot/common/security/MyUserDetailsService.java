@@ -6,16 +6,23 @@
 package com.seed.springboot.common.security;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Lists;
+import com.seed.springboot.common.utils.lang.StringUtils;
+import com.seed.springboot.system.model.domain.SysMenu;
+import com.seed.springboot.system.model.domain.SysRole;
+import com.seed.springboot.system.model.domain.SysUser;
+import com.seed.springboot.system.service.SysMenuService;
+import com.seed.springboot.system.service.SysRoleService;
+import com.seed.springboot.system.service.SysUserService;
 
 /**
  * @ClassName: MyUserDetailsService
@@ -28,48 +35,49 @@ import com.google.common.collect.Lists;
 public class MyUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private SysUserService sysUserService;
+	
+	@Autowired
+	private SysRoleService sysRoleService;
+	
+	@Autowired
+	private SysMenuService sysMenuService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// return new User(username, password, authorities);
-		// String password = new BCryptPasswordEncoder(8).encode("user");
-		// List<SimpleGrantedAuthority> authorities =
-		// createAuthorities("admin_role,user_role");
-		// return new User("user", password, authorities);
-//		return new User(username, passwordEncoder.encode("123456"), AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER"));
+		SysUser sysUser = sysUserService.getByLogin(username);
+		if(sysUser == null){
+			throw new UsernameNotFoundException("用户信息不存在");
+		}
+		
 		MyUserDetails myUserDetails = new MyUserDetails();
-		myUserDetails.setLoginName(username);
-		myUserDetails.setPassword(passwordEncoder.encode("123456"));
-		myUserDetails.setAuthorities(mapToGrantedAuthorities());
-		myUserDetails.setEnabled(true);
+		BeanUtils.copyProperties(sysUser, myUserDetails);
+		myUserDetails.setAuthorities(mapToGrantedAuthorities(myUserDetails.getUserCode()));
 		return myUserDetails;
 	}
 	
 	/**
-     * 权限转换
-	 * @param <SimpleGrantedAuthority>
-	 * @param <GrantedAuthority>
-     *
-     * @param sysRoles 角色列表
-     * @param sysMenus 菜单列表
-     * @return 权限列表
-     */
-    private static List<SimpleGrantedAuthority> mapToGrantedAuthorities() {
+	 * 权限转换
+	 * @param userCode 用户编码
+	 * @return
+	 */
+    public List<SimpleGrantedAuthority> mapToGrantedAuthorities(String userCode) {
+    	List<SysRole> sysRoles = sysRoleService.findListByUserCode(userCode);
+    	List<SysMenu> sysMenus = sysMenuService.findListByUserCode(userCode);
+    	
+        List<SimpleGrantedAuthority> authorities =
+            sysRoles.stream().filter(SysRole::getEnabled)
+                .map(sysRole -> new SimpleGrantedAuthority(sysRole.getRoleName())).collect(Collectors.toList());
 
-//        List<SimpleGrantedAuthority> authorities =
-//            sysRoles.stream().filter(SysRole::getEnabled)
-//                .map(sysRole -> new SimpleGrantedAuthority(sysRole.getName())).collect(Collectors.toList());
-//
-//        // 添加基于Permission的权限信息
-//        sysMenus.stream().filter(menu -> StringHelper.isNotBlank(menu.getPermission())).forEach(menu -> {
-//            // 添加基于Permission的权限信息
-//            for (String permission : StringHelper.split(menu.getPermission(), ",")) {
-//                authorities.add(new SimpleGrantedAuthority(permission));
-//            }
-//        });
-    	List<SimpleGrantedAuthority> authorities = Lists.newLinkedList();
-		authorities.add(new SimpleGrantedAuthority("USER_ROLE"));
+        // 添加基于Permission的权限信息
+        sysMenus.stream().filter(menu -> StringUtils.isNotBlank(menu.getPermission())).forEach(menu -> {
+            // 添加基于Permission的权限信息
+            for (String permission : StringUtils.split(menu.getPermission(), ",")) {
+                authorities.add(new SimpleGrantedAuthority(permission));
+            }
+        });
+//    	List<SimpleGrantedAuthority> authorities = Lists.newLinkedList();
+//		authorities.add(new SimpleGrantedAuthority("USER_ROLE"));
 		return authorities;
     }
 

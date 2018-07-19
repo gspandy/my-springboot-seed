@@ -11,7 +11,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
@@ -37,13 +39,15 @@ public class AppLoginFailureHandler extends SimpleUrlAuthenticationFailureHandle
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex) throws IOException, ServletException {
 		log.debug("[AppLoginFailureHandler] onAuthenticationFailure ==》 拦截了？");
 		response.setContentType("application/json");
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         try {
         	ObjectMapper mapper = new ObjectMapper();
         	if(ex instanceof BadCredentialsException){
-        		mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100401, ex));
+        		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        		mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100400.getCode(), "用户名密码错误", ex.getMessage() , null));
+        	}else if(ex instanceof DisabledException){
+        		mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100401.getCode(), "用户名被禁用或已经注销", ex.getMessage() , null));
         	}
-        	
             mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100401, ex));
         } catch (Exception e) {
             throw new ServletException();

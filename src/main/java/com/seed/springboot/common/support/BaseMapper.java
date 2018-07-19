@@ -5,95 +5,16 @@
  */
 package com.seed.springboot.common.support;
 
-import java.util.List;
-import java.util.Map;
+import tk.mybatis.mapper.common.Mapper;
+import tk.mybatis.mapper.common.MySqlMapper;
 
 /**
  * @ClassName: BaseMapper
- * @Description: TODO(这里用一句话描述这个类的作用)
+ * @Description: TODO(继承自tk.mapper)
  * @author RuYang ruyang@fosun.com
  * @date 2018年5月17日 下午5:22:25
  * 
  */
-public interface BaseMapper<T> {
-
-	/**
-	 * 获取单条数据
-	 *
-	 * @param id
-	 *            主键
-	 * @return T t
-	 */
-	T get(String id);
-
-	/**
-	 * 获取单条数据
-	 *
-	 * @param entity
-	 *            T
-	 * @return T t
-	 */
-	T get(T entity);
-
-	/**
-	 * 查询数据列表
-	 *
-	 * @param entity
-	 *            T
-	 * @return List<T> list
-	 */
-	List<T> findList(T entity);
-
-	/**
-	 * 查询数据列表
-	 *
-	 * @param queryMap
-	 *            查询条件
-	 * @return List<T> list
-	 */
-	List<T> queryList(Map<String, Object> queryMap);
-
-	/**
-	 * 查询所有数据列表
-	 *
-	 * @return List<T> list
-	 */
-	List<T> findAllList();
-
-	/**
-	 * 插入数据
-	 *
-	 * @param entity
-	 *            T
-	 * @return int int
-	 */
-	int insert(T entity);
-
-	/**
-	 * 更新数据
-	 *
-	 * @param entity
-	 *            T
-	 * @return int int
-	 */
-	int update(T entity);
-
-	/**
-	 * 删除数据
-	 *
-	 * @param entity
-	 *            T
-	 * @return int int
-	 */
-	int delete(T entity);
-
-	/**
-	 * 删除数据
-	 *
-	 * @param serialNo
-	 *            entity id
-	 * @return int int
-	 */
-	int deleteById(String id);
+public interface BaseMapper<T> extends Mapper<T>, MySqlMapper<T>{
 
 }

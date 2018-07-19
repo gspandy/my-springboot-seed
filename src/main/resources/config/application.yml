@@ -12,9 +12,19 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     joda-date-time-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
-  cache:
-    cache-names:
-    - ${spring.application.name}
+mybatis:
+  type-aliases-package: com.seed.springboot
+  mapper-locations: classpath*:mapper/**/*.xml
+mapper:
+  mappers:
+    - com.seed.springboot.common.support.BaseMapper
+  not-empty: false
+  identity: MYSQL
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params: count=countSql
 seed:
   seed-name: ${spring.application.name}
   jwt:
@@ -42,5 +52,5 @@ seed:
       mobile-max-send-count: 1
       ip-max-send-count: 2
       total-max-send-count: 3
-      
+    
       

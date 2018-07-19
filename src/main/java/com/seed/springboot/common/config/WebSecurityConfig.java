@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -103,7 +104,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		        try {
 		            ObjectMapper mapper = new ObjectMapper();
-		            mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100403, ex));
+		            mapper.writeValue(response.getOutputStream(), WrapMapper.wrap(ErrorCodeEnum.BA100401, ex));
 		        } catch (Exception e) {
 		            throw new ServletException();
 		        }
@@ -121,7 +122,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger**/**",
             "/*/api-docs",
             "/webjars/**",
-            "/druid/**"
+            "/druid/**",
+            "/test/**"
         )
         .antMatchers(HttpMethod.POST, "/*/user")
         ;
@@ -148,8 +150,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	        .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler)
 	        .and()
 	        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-	        .and().apply(validateCodeSecurityConfig)
-	        .and().apply(smsCodeAuthenticationSecurityConfig)
+//	        .and().apply(validateCodeSecurityConfig)
+//	        .and().apply(smsCodeAuthenticationSecurityConfig)
 	        .and()
 	        .authorizeRequests()
 	        .antMatchers("/auth/**").permitAll()

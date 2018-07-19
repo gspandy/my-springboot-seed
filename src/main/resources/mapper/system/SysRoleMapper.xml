@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seed.springboot.system.mapper.SysRoleMapper">
+
+	<sql id="SysRoleColumns">
+		t.role_code AS "roleCode",
+		t.role_name AS "roleName",
+		t.role_type AS "roleType",
+		t.role_sort AS "roleSort",
+		t.user_type AS "userType",
+		t.status AS "status",
+		t.create_by AS "createBy",
+		t.create_date AS "createDate",
+		t.update_by AS "updateBy",
+		t.update_date AS "updateDate",
+		t.remarks AS "remarks"
+	</sql>
+    
+	<select id="findListByUserCode" resultType="SysRole">
+		SELECT 
+		<include refid="SysRoleColumns"/>
+		FROM sys_role t
+        LEFT JOIN sys_user_role ur ON ur.role_code = t.role_code
+        WHERE t.status = '0'
+        AND ur.user_code = #{userCode}
+        ORDER BY t.create_date
+    </select>
+</mapper>

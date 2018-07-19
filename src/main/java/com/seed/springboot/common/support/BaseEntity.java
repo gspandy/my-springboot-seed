@@ -7,6 +7,8 @@ package com.seed.springboot.common.support;
 
 import java.io.Serializable;
 
+import javax.persistence.Transient;
+
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,6 +31,7 @@ public abstract class BaseEntity<T> implements Serializable {
 	/**
 	 * 实体编号（唯一标识）
 	 */
+	@Transient
 	protected String id;
 
 	/**
@@ -114,10 +117,10 @@ public abstract class BaseEntity<T> implements Serializable {
 	}
 
 	/**
-	 * 删除标记（0：正常；1：删除；2：审核；）
+	 * 删除标记（0：正常；1：删除；2：无效）
 	 */
 	public static final String STATUS_NORMAL = "0";
 	public static final String STATUS_DELETE = "1";
-	public static final String STATUS_AUDIT = "2";
+	public static final String STATUS_DISABLED = "2";
 
 }

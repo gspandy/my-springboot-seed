@@ -48,7 +48,7 @@ public class MyUserDetails implements UserDetails {
     /**
      * 姓名
      */
-    private String nickname;
+    private String name;
     /**
      * 密码
      */

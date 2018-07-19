@@ -6,6 +6,7 @@
 package com.seed.springboot.common;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -52,6 +53,14 @@ public class SeedExceptionHandler {
 	public Wrapper<Object> validateCodeException(ValidateCodeException e) {
 		log.error("业务异常 => {}", e.getMessage(), e);
 		return WrapMapper.wrap(ErrorCodeEnum.BA100400, e);
+	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	@ResponseBody
+	public Wrapper<Object> accessDeniedException(AccessDeniedException e) {
+		log.error("业务异常 => {}", e.getMessage(), e);
+		return WrapMapper.wrap(ErrorCodeEnum.BA100403, e);
 	}
 	
 	@ExceptionHandler(Exception.class)
