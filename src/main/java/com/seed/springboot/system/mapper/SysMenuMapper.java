@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.seed.springboot.common.support.BaseMapper;
+import com.seed.springboot.common.support.TreeMapper;
 import com.seed.springboot.system.model.domain.SysMenu;
 
 /**
@@ -20,19 +20,19 @@ import com.seed.springboot.system.model.domain.SysMenu;
  * 
  */
 @Mapper
-public interface SysMenuMapper extends BaseMapper<SysMenu> {
+public interface SysMenuMapper extends TreeMapper<SysMenu> {
 
 	/**
 	 * 返回用户角色权限
-	 * @param userCode 用户编码
+	 * @param userId 用户编码
 	 * @return
 	 */
-	public List<SysMenu> findListByUserCode(String userCode);
+	public List<SysMenu> findListByUserId(SysMenu paramMenu);
 	
 	/**
 	 * 返回用户角色权限
 	 * @param roleCode 角色编码
 	 * @return
 	 */
-	public List<SysMenu> findListByRoleCode(String roleCode);
+	public List<SysMenu> findListByRoleId(SysMenu paramMenu);
 }

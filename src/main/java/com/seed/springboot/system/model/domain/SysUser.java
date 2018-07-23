@@ -6,7 +6,6 @@
 package com.seed.springboot.system.model.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -37,13 +36,6 @@ public class SysUser extends DataEntity<SysUser> {
 	 */
 	private static final long serialVersionUID = 1725824683795945703L;
 
-	/**
-	 * 用户编号
-	 */
-	@Id
-	@Column(name = "user_code")
-	private String userCode;
-	
 	@Column(name = "login_name")
 	private String loginName;
 	

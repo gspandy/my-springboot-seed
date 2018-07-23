@@ -85,10 +85,10 @@ public class IdGenerate {
 		return null;
 	}
 	
-//	public static void main(String[] args) {
+	public static void main(String[] args) {
 //		System.out.println(uuid());
 //		System.out.println(nextId());
-//		System.out.println(nextCode("8"));
+		System.out.println(nextCode("30"));
 //		System.out.println(nextCode("09"));
 //		System.out.println(nextCode("009"));
 //		System.out.println(nextCode("E09"));
@@ -114,5 +114,5 @@ public class IdGenerate {
 ////		}catch (Exception e) {
 ////			e.printStackTrace();
 ////		}
-//	}
+	}
 }

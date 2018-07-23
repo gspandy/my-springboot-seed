@@ -18,6 +18,7 @@ mybatis:
 mapper:
   mappers:
     - com.seed.springboot.common.support.BaseMapper
+    - com.seed.springboot.common.support.TreeMapper
   not-empty: false
   identity: MYSQL
 pagehelper:
@@ -52,5 +53,9 @@ seed:
       mobile-max-send-count: 1
       ip-max-send-count: 2
       total-max-send-count: 3
+  user:
+    super-admin-code: system
+    super-admin-get-menu-min-weight: 40
+   
     
       

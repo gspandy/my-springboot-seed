@@ -24,8 +24,8 @@ public interface SysRoleMapper extends BaseMapper<SysRole> {
 
 	/**
 	 * 返回用户角色列表
-	 * @param userCode
+	 * @param paramRole
 	 * @return
 	 */
-	public List<SysRole> findListByUserCode(String userCode);
+	public List<SysRole> findListByUserId(SysRole paramRole);
 }

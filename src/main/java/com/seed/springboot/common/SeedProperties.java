@@ -23,9 +23,23 @@ import lombok.Data;
 @Data
 public class SeedProperties {
 	
-	private String seedName;
-	
 	private JwtProperties jwt = new JwtProperties();
 	
 	private ValidateCodeProperties validateCode = new ValidateCodeProperties();
+	
+	private User user = new User();
+	
+	private String seedName;
+	
+	@Data
+	public class User{
+		
+		//指定超级管理员编号（研发团队使用的账号）
+		private String superAdminCode;
+		
+		// 超级管理员获取菜单的最小权重（默认20；>=40二级管理员；>=60系统管理员；>=80超级管理员）
+		private Integer superAdminGetMenuMinWeight;
+		
+		
+	}
 }

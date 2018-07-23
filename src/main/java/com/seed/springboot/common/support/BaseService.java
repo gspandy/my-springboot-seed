@@ -25,16 +25,18 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Transactional(readOnly = true)
 @Slf4j
-public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> implements IService<T> {
+public abstract class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> implements IService<T> {
 
 	@Autowired
-	private M mapper;
-	
+	protected M mapper;
+
 	public M getMapper() {
 		return mapper;
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.seed.springboot.common.support.IService#select(java.lang.Object)
 	 */
 	@Override
@@ -43,8 +45,11 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.select(record);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#selectByKey(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#selectByKey(java.lang.Object)
 	 */
 	@Override
 	public T selectByKey(Object key) {
@@ -52,7 +57,9 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.selectByPrimaryKey(key);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.seed.springboot.common.support.IService#selectAll()
 	 */
 	@Override
@@ -61,8 +68,11 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.selectAll();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#selectOne(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#selectOne(java.lang.Object)
 	 */
 	@Override
 	public T selectOne(T record) {
@@ -70,8 +80,11 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.selectOne(record);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#selectCount(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#selectCount(java.lang.Object)
 	 */
 	@Override
 	public int selectCount(T record) {
@@ -79,9 +92,12 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.selectCount(record);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.seed.springboot.common.support.IService#save(java.lang.Object)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int save(T record) {
 		// TODO Auto-generated method stub
@@ -94,9 +110,13 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#batchSave(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#batchSave(java.util.List)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int batchSave(List<T> list) {
 		// TODO Auto-generated method stub
@@ -108,27 +128,37 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.seed.springboot.common.support.IService#update(java.lang.Object)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int update(T entity) {
 		// TODO Auto-generated method stub
 		return mapper.updateByPrimaryKeySelective(entity);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.seed.springboot.common.support.IService#delete(java.lang.Object)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int delete(T record) {
 		// TODO Auto-generated method stub
 		return mapper.delete(record);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#batchDelete(java.util.List)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#batchDelete(java.util.List)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int batchDelete(List<T> list) {
 		// TODO Auto-generated method stub
@@ -144,17 +174,25 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#deleteByKey(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#deleteByKey(java.lang.Object)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int deleteByKey(Object key) {
 		// TODO Auto-generated method stub
 		return mapper.deleteByPrimaryKey(key);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#selectByExample(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#selectByExample(java.lang.
+	 * Object)
 	 */
 	@Override
 	public List<T> selectByExample(Object example) {
@@ -162,8 +200,12 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.selectByExample(example);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#selectCountByExample(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#selectCountByExample(java.
+	 * lang.Object)
 	 */
 	@Override
 	public int selectCountByExample(Object example) {
@@ -171,26 +213,40 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.selectCountByExample(example);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#updateByExample(java.lang.Object, java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#updateByExample(java.lang.
+	 * Object, java.lang.Object)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int updateByExample(T record, Object example) {
 		// TODO Auto-generated method stub
 		return mapper.updateByExampleSelective(record, example);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#deleteByExample(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#deleteByExample(java.lang.
+	 * Object)
 	 */
+	@Transactional(readOnly = false)
 	@Override
 	public int deleteByExample(Object example) {
 		// TODO Auto-generated method stub
 		return mapper.deleteByPrimaryKey(example);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#selectByRowBounds(java.lang.Object, org.apache.ibatis.session.RowBounds)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#selectByRowBounds(java.lang.
+	 * Object, org.apache.ibatis.session.RowBounds)
 	 */
 	@Override
 	public List<T> selectByRowBounds(T record, RowBounds rowBounds) {
@@ -198,8 +254,12 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 		return mapper.selectByRowBounds(record, rowBounds);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.seed.springboot.common.support.IService#selectByExampleAndRowBounds(java.lang.Object, org.apache.ibatis.session.RowBounds)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.seed.springboot.common.support.IService#selectByExampleAndRowBounds(
+	 * java.lang.Object, org.apache.ibatis.session.RowBounds)
 	 */
 	@Override
 	public List<T> selectByExampleAndRowBounds(Object example, RowBounds rowBounds) {
@@ -210,5 +270,5 @@ public class BaseService<M extends BaseMapper<T>, T extends BaseEntity<T>> imple
 	protected String generateId() {
 		return IdGenerate.nextId();
 	}
-	
+
 }

@@ -32,7 +32,7 @@ public class MyUserDetails implements UserDetails {
 	/**
      * id
      */
-    private String userCode;
+    private String id;
     /**
      * 登录名
      */

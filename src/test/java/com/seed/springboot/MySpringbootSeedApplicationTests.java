@@ -39,7 +39,7 @@ public class MySpringbootSeedApplicationTests {
 	// 获取用户信息得URL
 	final static String USER_INFO_URI = "http://localhost:" + PORT + "/current";
 
-	@Test
+//	@Test
 	public void getUserInfo() throws Exception {
 		RestTemplate rest = new RestTemplate();
 		HttpHeaders headers = new HttpHeaders();
@@ -88,6 +88,11 @@ public class MySpringbootSeedApplicationTests {
 		byte[] encodedAuth = Base64.encodeBase64(auth.getBytes());
 		String authHeader = "Basic " + new String(encodedAuth);
 		return authHeader;
+	}
+	
+	@Test
+	public void testSaveMenu(){
+		
 	}
 
 }

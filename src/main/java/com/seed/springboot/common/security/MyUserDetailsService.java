@@ -42,7 +42,7 @@ public class MyUserDetailsService implements UserDetailsService {
 	
 	@Autowired
 	private SysMenuService sysMenuService;
-
+	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		SysUser sysUser = sysUserService.getByLogin(username);
@@ -52,19 +52,19 @@ public class MyUserDetailsService implements UserDetailsService {
 		
 		MyUserDetails myUserDetails = new MyUserDetails();
 		BeanUtils.copyProperties(sysUser, myUserDetails);
-		myUserDetails.setAuthorities(mapToGrantedAuthorities(myUserDetails.getUserCode()));
+		myUserDetails.setAuthorities(mapToGrantedAuthorities(myUserDetails.getId()));
 		return myUserDetails;
 	}
 	
 	/**
 	 * 权限转换
-	 * @param userCode 用户编码
+	 * @param userId 用户编码
 	 * @return
 	 */
-    public List<SimpleGrantedAuthority> mapToGrantedAuthorities(String userCode) {
-    	List<SysRole> sysRoles = sysRoleService.findListByUserCode(userCode);
-    	List<SysMenu> sysMenus = sysMenuService.findListByUserCode(userCode);
-    	
+    public List<SimpleGrantedAuthority> mapToGrantedAuthorities(String userId) {
+    	List<SysRole> sysRoles = sysRoleService.findListByUserId(userId);
+    	List<SysMenu> sysMenus = sysMenuService.findListByUserId(userId);
+    			
         List<SimpleGrantedAuthority> authorities =
             sysRoles.stream().filter(SysRole::getEnabled)
                 .map(sysRole -> new SimpleGrantedAuthority(sysRole.getRoleName())).collect(Collectors.toList());
@@ -76,8 +76,6 @@ public class MyUserDetailsService implements UserDetailsService {
                 authorities.add(new SimpleGrantedAuthority(permission));
             }
         });
-//    	List<SimpleGrantedAuthority> authorities = Lists.newLinkedList();
-//		authorities.add(new SimpleGrantedAuthority("USER_ROLE"));
 		return authorities;
     }
 

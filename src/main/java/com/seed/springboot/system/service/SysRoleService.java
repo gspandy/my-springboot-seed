@@ -7,9 +7,11 @@ package com.seed.springboot.system.service;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.seed.springboot.common.SeedProperties;
 import com.seed.springboot.common.support.BaseService;
 import com.seed.springboot.system.mapper.SysRoleMapper;
 import com.seed.springboot.system.model.domain.SysRole;
@@ -25,12 +27,19 @@ import com.seed.springboot.system.model.domain.SysRole;
 @Transactional(readOnly = true)
 public class SysRoleService extends BaseService<SysRoleMapper, SysRole>{
 	
+	@Autowired
+	private SeedProperties seedProperties;
+	
 	/**
 	 * 返回用户角色列表
-	 * @param userCode
+	 * @param userId
 	 * @return 
 	 */
-	public List<SysRole> findListByUserCode(String userCode){
-		return this.getMapper().findListByUserCode(userCode);
+	public List<SysRole> findListByUserId(String userId){
+		if(userId.equals(seedProperties.getUser().getSuperAdminCode())){
+    		return this.selectAll();
+    	}
+		SysRole paramRole = new SysRole();
+		return this.getMapper().findListByUserId(paramRole);
 	}
 }

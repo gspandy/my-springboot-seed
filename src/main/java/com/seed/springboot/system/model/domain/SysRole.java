@@ -6,7 +6,6 @@
 package com.seed.springboot.system.model.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -35,10 +34,6 @@ public class SysRole extends DataEntity<SysRole> {
 	 */
 	private static final long serialVersionUID = 2496814008420037252L;
 
-	@Id
-	@Column(name = "role_code")
-	private String roleCode;	// 角色编码
-	
 	@Column(name = "role_name")
 	private String roleName;	// 角色名称
 	
@@ -55,5 +50,8 @@ public class SysRole extends DataEntity<SysRole> {
 	public boolean getEnabled(){
 		return STATUS_NORMAL.equalsIgnoreCase(this.getStatus()) ;
 	}
+	
+	@Transient
+	private String userId;
 	
 }

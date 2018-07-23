@@ -6,12 +6,12 @@
 package com.seed.springboot.system.model.domain;
 
 import javax.persistence.Column;
-import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.ibatis.type.Alias;
 
-import com.seed.springboot.common.support.DataEntity;
+import com.seed.springboot.common.support.TreeEntity;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -27,36 +27,11 @@ import lombok.EqualsAndHashCode;
 @Data
 @Table(name = "sys_menu")
 @Alias("SysMenu")
-public class SysMenu extends DataEntity<SysMenu>{
+public class SysMenu extends TreeEntity<SysMenu>{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -8792387733567541160L;
-	
-	@Id
-	@Column(name = "menu_code")
-	private String menuCode;	// 菜单编码
-	
-	@Column(name = "parent_code")
-	private String parentCode;	// 父级编号
-	
-	@Column(name = "parent_codes")
-	private String parentCodes;	// 所有父级编号
-	
-	@Column(name = "tree_sort")
-	private Long treeSort;	// 本级排序号（升序）
-	
-	@Column(name = "tree_sorts")
-	private String treeSorts;	// 所有级别排序号
-	
-	@Column(name = "tree_leaf")
-	private String treeLeaf;	// 是否最末级
-	
-	@Column(name = "tree_level")
-	private Long treeLevel;	// 层次级别
-	
-	@Column(name = "tree_names")
-	private String treeNames;	// 全节点名
 	
 	@Column(name = "menu_name")
 	private String menuName;	// 菜单名称
@@ -77,9 +52,24 @@ public class SysMenu extends DataEntity<SysMenu>{
 	private String menuColor;	// 颜色
 	
 	private String permission;	// 权限标识
+	
 	private Long weight;	// 菜单权重
 	
-	@Column(name = "is_show")
-	private String isShow;	// 是否显示（1显示 0隐藏）
-
+	@Transient
+	private String userId; //用户编码
+	
+	@Transient
+	private String roleId; //角色编码
+	
+	@Transient
+	private SysMenu parent; //父类对象
+	
+	public SysMenu(){
+		super();
+		this.setIsShow("1");
+	}
+	
+	public SysMenu(String id){
+		super(id);
+	}
 }

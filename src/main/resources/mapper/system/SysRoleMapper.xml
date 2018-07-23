@@ -3,7 +3,7 @@
 <mapper namespace="com.seed.springboot.system.mapper.SysRoleMapper">
 
 	<sql id="SysRoleColumns">
-		t.role_code AS "roleCode",
+		t.id,
 		t.role_name AS "roleName",
 		t.role_type AS "roleType",
 		t.role_sort AS "roleSort",
@@ -16,13 +16,13 @@
 		t.remarks AS "remarks"
 	</sql>
     
-	<select id="findListByUserCode" resultType="SysRole">
+	<select id="findListByUserId" resultType="SysRole">
 		SELECT 
 		<include refid="SysRoleColumns"/>
 		FROM sys_role t
-        LEFT JOIN sys_user_role ur ON ur.role_code = t.role_code
-        WHERE t.status = '0'
-        AND ur.user_code = #{userCode}
+        LEFT JOIN sys_user_role ur ON ur.role_id = t.id
+        WHERE t.status = #{STATUS_NORMAL}
+        AND ur.user_id = #{userId}
         ORDER BY t.create_date
     </select>
 </mapper>

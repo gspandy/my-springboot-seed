@@ -7,7 +7,7 @@ package com.seed.springboot.common.support;
 
 import java.io.Serializable;
 
-import javax.persistence.Transient;
+import javax.persistence.Id;
 
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 
@@ -31,7 +31,7 @@ public abstract class BaseEntity<T> implements Serializable {
 	/**
 	 * 实体编号（唯一标识）
 	 */
-	@Transient
+	@Id
 	protected String id;
 
 	/**

@@ -3,14 +3,12 @@
 <mapper namespace="com.seed.springboot.system.mapper.SysMenuMapper">
 
 	<sql id="SysMenuColumns">
-		t.menu_code AS "menuCode",
-		t.parent_code AS "parentCode",
-		t.parent_codes AS "parentCodes",
+		t.id,
+		t.parent_id AS "parentId",
+		t.parent_ids AS "parentIds",
 		t.tree_sort AS "treeSort",
-		t.tree_sorts AS "treeSorts",
 		t.tree_leaf AS "treeLeaf",
 		t.tree_level AS "treeLevel",
-		t.tree_names AS "treeNames",
 		t.menu_name AS "menuName",
 		t.menu_type AS "menuType",
 		t.menu_href AS "menuHref",
@@ -28,25 +26,56 @@
 		t.remarks AS "remarks"
 	</sql>
     
-	<select id="findListByUserCode" resultType="SysMenu">
-		SELECT 
+	<select id="findListByUserId" resultType="SysMenu">
+		SELECT DISTINCT 
 		<include refid="SysMenuColumns"/>
 		FROM sys_menu t
-        JOIN sys_role_menu rm ON rm.menu_code = t.menu_code
-        JOIN sys_role r ON r.role_code = rm.role_code AND r.status = '0'
-        JOIN sys_user_role ur ON ur.role_code = r.role_code
-        JOIN sys_user u ON u.user_code = ur.user_code AND u.user_code = #{userCode}
-        WHERE t.status = '0'
+        JOIN sys_role_menu rm ON rm.menu_id = t.id
+        JOIN sys_role r ON r.id = rm.role_id AND r.status = #{STATUS_NORMAL}
+        JOIN sys_user_role ur ON ur.role_id = r.id
+        JOIN sys_user u ON u.id = ur.user_id AND u.id = #{userId}
+        WHERE t.status = #{STATUS_NORMAL}
+        <if test="parentId != null and parentId != ''">
+			AND t.parent_id = #{parentId}
+		</if>
         ORDER BY t.tree_sort
     </select>
     
-    <select id="findListByRoleCode" resultType="SysMenu">
+    <select id="findListByRoleId" resultType="SysMenu">
     	SELECT 
         <include refid="SysMenuColumns"/>
         FROM sys_menu t
-        LEFT JOIN sys_role_menu rm ON rm.menu_code = t.menu_code
-        WHERE t.status = '0'
-        AND rm.role_code = #{roleCode}
+        LEFT JOIN sys_role_menu rm ON rm.menu_id = t.id
+        WHERE t.status = #{STATUS_NORMAL}
+        AND rm.role_id = #{roleId}
+        <if test="parentId != null and parentId != ''">
+			AND t.parent_id = #{parentId}
+		</if>
         ORDER BY t.tree_sort
     </select>
+    
+    <select id="findByParentIdsLike" resultType="SysMenu">
+		SELECT
+			t.id,
+			t.parent_id AS "parentId",
+			t.parent_ids AS "parentIds"
+		FROM sys_menu t
+		WHERE t.status = #{STATUS_NORMAL} 
+		AND t.parent_ids LIKE #{parentIds}
+		ORDER BY t.tree_sort
+	</select>
+	
+	<update id="updateParentIds">
+		UPDATE sys_menu SET 
+			parent_id = #{parentId}, 
+			parent_ids = #{parentIds},
+			tree_level = #{treeLevel}
+		WHERE id = #{id}
+	</update>
+	
+	<update id="updateTreeLeaf">
+		UPDATE sys_menu SET 
+			tree_leaf = 0
+		WHERE parent_ids LIKE #{parentIds}
+	</update>
 </mapper>
